@@ -120,7 +120,7 @@ component output=false {
 	public Bundle function addPreProcessor(
 		  required string preprocessor
 		,          array  directories  = [ "/" ]
-		,          any    source       = "*"
+		,          array  source       = [ "**/*" ]
 		,          any    destination  = function( source ){ return source; }
 	) output=false {
 		var p = _getPreProcessors();
