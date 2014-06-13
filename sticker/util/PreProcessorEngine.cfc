@@ -13,11 +13,18 @@ component output=false {
 	public void function run( required PreProcessorDefinition definition, required string rootDirectory ) output=false {
 		var preProcessorObject = CreateObject( definition.getPreProcessor() );
 		var root               = ReReplace( arguments.rootDirectory, "(^/)$", "\1/" );
-		var src                = root & ReReplace( definition.getSource(), "^/", "" );
+		var src                = definition.getSource();
 		var dest               = root & ReReplace( definition.getDestination(), "^/", "" );
 
+		if ( !IsArray( src ) ) {
+			src = [ src ];
+		}
+		for( var i=1; i <= src.len(); i++ ){
+			src[i] = root & ReReplace( src[i], "^/", "" );
+		}
+
 		preProcessorObject.process(
-			  source      = [ src ]
+			  source      = src
 			, destination = dest
 		);
 	}
