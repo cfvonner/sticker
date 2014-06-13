@@ -19,14 +19,28 @@ component output=false {
 		if ( !IsArray( src ) ) {
 			src = [ src ];
 		}
-		for( var i=1; i <= src.len(); i++ ){
-			src[i] = root & ReReplace( src[i], "^/", "" );
-		}
+		src = _resolveWildcardFileArray( arguments.rootDirectory, src );
 
 		preProcessorObject.process(
 			  source      = src
 			, destination = dest
 		);
+	}
+
+// PRIVATE HELPERS
+	private array function _resolveWildcardFileArray( required string rootDirectory, required array globPatternArray ) output=false {
+		var expandedRoot = ExpandPath( arguments.rootDirectory );
+		var matches      = new Wildcard().directoryList( expandedRoot, arguments.globPatternArray );
+
+
+		for( var i=1; i <= matches.len(); i++ ){
+			var relative = Right( matches[i], Len( matches[i] ) - Len( expandedRoot ) );
+			    relative = Replace( relative, "\", "/", "all" );
+
+			matches[i] = arguments.rootDirectory & relative;
+		}
+
+		return matches;
 	}
 
 }
