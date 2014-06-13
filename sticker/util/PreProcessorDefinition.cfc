@@ -4,12 +4,12 @@
 component accessors=true output=false {
 
 	property name="preprocessor" type="string";
-	property name="direcotries"  type="array";
+	property name="directories"  type="array";
 	property name="source"       type="any";
 	property name="destination"  type="any";
 
 	public struct function getMemento() output=false {
-		var keys = [ "preprocessor", "direcotries", "source", "destination" ];
+		var keys = [ "preprocessor", "directories", "source", "destination" ];
 		var memento = {};
 
 		for( var key in keys ){

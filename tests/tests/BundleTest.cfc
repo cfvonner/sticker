@@ -192,13 +192,13 @@ component extends="testbox.system.BaseSpec"{
 				var bundle = new sticker.util.Bundle( rootDirectory="/resources/bundles/bundle1", rootUrl="/" );
 				var testProcessor1 = {
 					  preprocessor = "sticker.preprocessors.Less"
-					, direcotries  = [ "/css" ]
+					, directories  = [ "/css" ]
 					, source       = "*.less"
 					, destination  = function( source ){ return source & ".css"; }
 				};
 				var testProcessor2 = {
 					  preprocessor = "sticker.preprocessors.Minify"
-					, direcotries  = [ "/css", "/js" ]
+					, directories  = [ "/css", "/js" ]
 					, source       = function( path ){ return ReFindNoCase( "\.(js|css)$", path ); }
 					, destination  = function( source ){ return "test.min.css"; }
 				};
@@ -210,10 +210,10 @@ component extends="testbox.system.BaseSpec"{
 
 				// have to test individual fields this way because testbox doesn't yet compare closure functions
 				expect( preprocessors[1].getPreProcessor() ).toBe( testProcessor1.preProcessor );
-				expect( preprocessors[1].getDirecotries() ).toBe( testProcessor1.direcotries );
+				expect( preprocessors[1].getdirectories() ).toBe( testProcessor1.directories );
 				expect( preprocessors[1].getSource() ).toBe( testProcessor1.source );
 				expect( preprocessors[2].getPreProcessor() ).toBe( testProcessor2.preProcessor );
-				expect( preprocessors[2].getDirecotries() ).toBe( testProcessor2.direcotries );
+				expect( preprocessors[2].getdirectories() ).toBe( testProcessor2.directories );
 			} );
 		} );
 
