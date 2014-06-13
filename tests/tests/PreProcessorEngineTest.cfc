@@ -71,6 +71,25 @@ component extends="testbox.system.BaseSpec"{
 				} );
 			} );
 
+			it( "should pass filtered array of sources to 'process' method when sources are supplied as an array of glob filters with additional function for filter", function(){
+				var testProcessor = new sticker.util.PreProcessorDefinition(
+					  preprocessor = "resources.preprocessors.DummyPreProcessor"
+					, source       = [ "**/*.js", "!**/*.min.js" ]
+					, filter       = function( path ){ return !ReFindNoCase( "subfolder", path ); }
+					, destination  = "/compiled/javascript.min.js"
+				);
+
+				request.__dummyPreProcessorLog = []; // see /resources/preprocessors/DummyPreProcessor for what we do with this variable
+
+				processor.run( definition=testProcessor, rootDirectory="/resources/bundles/bundle1/" );
+
+				expect( request.__dummyPreProcessorLog.len() ).toBe( 1 );
+				expect( request.__dummyPreProcessorLog[1] ).toBe( {
+					  source      = [ "/resources/bundles/bundle1/js/javascript.js" ]
+					, destination = "/resources/bundles/bundle1/compiled/javascript.min.js"
+				} );
+			} );
+
 		} );
 
 	}

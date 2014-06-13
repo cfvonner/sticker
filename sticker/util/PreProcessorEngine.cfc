@@ -20,6 +20,9 @@ component output=false {
 			src = [ src ];
 		}
 		src = _resolveWildcardFileArray( arguments.rootDirectory, src );
+		if ( !IsNull( definition.getFilter() ) ){
+			src = src.filter( definition.getFilter() );
+		}
 
 		preProcessorObject.process(
 			  source      = src
