@@ -181,6 +181,42 @@ component extends="testbox.system.BaseSpec"{
 			} );
 		} );
 
+		describe( "getPreprocessors()", function(){
+			it( "should return an empty array when no processors have been registered", function(){
+				var bundle = new sticker.util.Bundle( rootDirectory="/resources/bundles/bundle1", rootUrl="/" );
+
+				expect( bundle.getPreprocessors() ).toBe( [] );
+			} );
+
+			it( "should return an array of registered processors, in the order they were registered", function(){
+				var bundle = new sticker.util.Bundle( rootDirectory="/resources/bundles/bundle1", rootUrl="/" );
+				var testProcessor1 = {
+					  preprocessor = "sticker.preprocessors.Less"
+					, direcotries  = [ "/css" ]
+					, source       = "*.less"
+					, destination  = function( source ){ return source & ".css"; }
+				};
+				var testProcessor2 = {
+					  preprocessor = "sticker.preprocessors.Minify"
+					, direcotries  = [ "/css", "/js" ]
+					, source       = function( path ){ return ReFindNoCase( "\.(js|css)$", path ); }
+					, destination  = function( source ){ return "test.min.css"; }
+				};
+
+				bundle.addPreProcessor( argumentCollection=testProcessor1 );
+				bundle.addPreProcessor( argumentCollection=testProcessor2 );
+
+				var preprocessors = bundle.getPreprocessors();
+
+				// have to test individual fields this way because testbox doesn't yet compare closure functions
+				expect( preprocessors[1].getPreProcessor() ).toBe( testProcessor1.preProcessor );
+				expect( preprocessors[1].getDirecotries() ).toBe( testProcessor1.direcotries );
+				expect( preprocessors[1].getSource() ).toBe( testProcessor1.source );
+				expect( preprocessors[2].getPreProcessor() ).toBe( testProcessor2.preProcessor );
+				expect( preprocessors[2].getDirecotries() ).toBe( testProcessor2.direcotries );
+			} );
+		} );
+
 	}
 
 /************************************ PRIVATE HELPERS ***************************************/

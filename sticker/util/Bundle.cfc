@@ -15,6 +15,7 @@ component output=false {
 		_setRootDirectory( arguments.rootDirectory );
 		_setRootUrl( arguments.rootUrl );
 		_setAssetCollection( {} );
+		_setPreProcessors( [] );
 		return this;
 	}
 
@@ -106,6 +107,31 @@ component output=false {
 		return this;
 	}
 
+	/**
+	 * I return any pre-processors that have been registered using addPreProcessor()
+	 */
+	public array function getPreProcessors() output=false {
+		return _getPreProcessors();
+	}
+
+	/**
+	 * I allow the configurator to register a preprocessor for the bundle
+	 */
+	public Bundle function addPreProcessor(
+		  required string preprocessor
+		,          array  directories  = [ "/" ]
+		,          any    source       = "*"
+		,          any    destination  = function( source ){ return source; }
+	) output=false {
+		var p = _getPreProcessors();
+
+		p.append( new PreProcessorDefinition( argumentCollection=arguments ) );
+
+		_setPreProcessors( p );
+
+		return this;
+	}
+
 // PRIVATE HELPERS
 	private string function _resolvePath( required string path ) output=false {
 		var fullPath  = _getRootDirectory();
@@ -172,5 +198,12 @@ component output=false {
 	}
 	private void function _setAssetCollection( required struct assetCollection ) output=false {
 		_assetCollection = arguments.assetCollection;
+	}
+
+	private array function _getPreProcessors() output=false {
+		return _preProcessors;
+	}
+	private void function _setPreProcessors( required array preProcessors ) output=false {
+		_preProcessors = arguments.preProcessors;
 	}
 }
