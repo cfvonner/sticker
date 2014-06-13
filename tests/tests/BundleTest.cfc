@@ -37,7 +37,7 @@ component extends="testbox.system.BaseSpec"{
 			it( "should resolve any paths containing wildcards", function(){
 				var bundle = new sticker.util.Bundle( rootDirectory="/resources/bundles/bundle1", rootUrl="/assets/" );
 
-				bundle.addAsset( id="somejs", path="/js/subfolder/*-myfile.min.js" );
+				bundle.addAsset( id="somejs", path="/js/**/*-myfile.min.js" );
 
 				expect( _assetsToStruct( bundle.getAssets() ) ).toBe( {
 					  somejs = { type="js", path="/js/subfolder/fa56e8c-myfile.min.js", url="/assets/js/subfolder/fa56e8c-myfile.min.js", before=[], after=[], ie="", media="", renderedInclude="", dependsOn=[], dependents=[] }

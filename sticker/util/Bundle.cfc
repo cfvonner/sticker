@@ -134,33 +134,19 @@ component output=false {
 
 // PRIVATE HELPERS
 	private string function _resolvePath( required string path ) output=false {
-		var fullPath  = _getRootDirectory();
-		var directory = "";
-		var file      = "";
-		var matches   = "";
-		var resolved  = GetDirectoryFromPath( arguments.path );
+		var rootDir = ExpandPath( _getRootDirectory() );
+		var matches = new Wildcard().directoryList( rootDir, [ arguments.path ] );
 
-		if ( Left( arguments.path, 1 ) != "/" ) {
-			fullPath &= "/";
-		}
-		fullPath &= arguments.path;
-
-		directory = GetDirectoryFromPath( fullPath );
-		file      = ListLast( fullPath, "\/" );
-
-		if ( !DirectoryExists( directory ) ) {
-			throw( type="Sticker.missingAsset", message="The asset [#arguments.path#] could not be found in the bundle who's root directory is at [#_getRootDirectory()#]" );
-		}
-
-		matches = DirectoryList( directory, false, "name", file );
 		if ( !matches.len() ) {
 			throw( type="Sticker.missingAsset", message="The asset [#arguments.path#] could not be found in the bundle who's root directory is at [#_getRootDirectory()#]" );
 		}
 		if ( matches.len() > 1 ) {
 			throw( type="Sticker.multipleAssets", message="The asset path [#arguments.path#] returned multiple assets. Wildcard asset paths must resolve to a single file." );
 		}
+		var relativePath = Right( matches[1], Len( matches[1] ) - Len( rootDir ) );
+		    relativePath = Replace( relativePath, "\", "/", "all" );
 
-		return resolved & matches[1];
+		return relativePath;
 	}
 
 	/**
