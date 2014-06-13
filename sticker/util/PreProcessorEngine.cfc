@@ -14,17 +14,32 @@ component output=false {
 		var preProcessorObject = CreateObject( definition.getPreProcessor() );
 		var root               = ReReplace( arguments.rootDirectory, "(^/)$", "\1/" );
 		var src                = definition.getSource();
-		var dest               = root & ReReplace( definition.getDestination(), "^/", "" );
+		var dest               = definition.getDestination();
+		var destinationMap     = StructNew( "linked" );
 
 		src = _resolveWildcardFileArray( arguments.rootDirectory, src );
 		if ( !IsNull( definition.getFilter() ) ){
 			src = src.filter( definition.getFilter() );
 		}
 
-		preProcessorObject.process(
-			  source      = src
-			, destination = dest
-		);
+		if ( IsSimpleValue( dest ) ) {
+			destinationMap[ dest ] = src;
+		} elseif ( IsClosure( dest ) ) {
+			for( var srcPath in src ){
+				var calculatedDest = dest( Right( srcPath, Len( srcPath ) - Len( root ) ) );
+
+				destinationMap[ calculatedDest ] = destinationMap[ calculatedDest ] ?: [];
+				destinationMap[ calculatedDest ].append( srcPath );
+			}
+		}
+
+		// root & ReReplace( dest, "^/", "" )
+		for( var destPath in destinationMap ){
+			preProcessorObject.process(
+				  source      = destinationMap[ destPath ]
+				, destination = root & ReReplace( destPath, "^/", "" )
+			);
+		}
 	}
 
 // PRIVATE HELPERS

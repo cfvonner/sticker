@@ -90,6 +90,35 @@ component extends="testbox.system.BaseSpec"{
 				} );
 			} );
 
+			it( "should map source files to destination filenames when a function is passed to generate the destination filename", function(){
+				var testProcessor = new sticker.util.PreProcessorDefinition(
+					  preprocessor = "resources.preprocessors.DummyPreProcessor"
+					, source       = [ "**/*.js" ]
+					, destination  = function( source ){
+						var dest = ListDeleteAt( source, ListLen( source, "/" ), "/" );
+						    dest = ListChangeDelims( dest, "-", "/" );
+						    dest = ReReplace( dest, "^-", "" );
+						    dest = ReReplace( dest, "-$", "" );
+
+						return "/compiled/#dest#.min.#ListLast( source, '.' )#";
+					  }
+				);
+
+				request.__dummyPreProcessorLog = []; // see /resources/preprocessors/DummyPreProcessor for what we do with this variable
+
+				processor.run( definition=testProcessor, rootDirectory="/resources/bundles/bundle1/" );
+
+				expect( request.__dummyPreProcessorLog.len() ).toBe( 2 );
+				expect( request.__dummyPreProcessorLog[1] ).toBe( {
+					  source      = [ "/resources/bundles/bundle1/js/subfolder/fa56e8c-myfile.min.js", "/resources/bundles/bundle1/js/subfolder/anotherjsfile.js" ]
+					, destination = "/resources/bundles/bundle1/compiled/js-subfolder.min.js"
+				} );
+				expect( request.__dummyPreProcessorLog[2] ).toBe( {
+					  source      = [ "/resources/bundles/bundle1/js/javascript.js" ]
+					, destination = "/resources/bundles/bundle1/compiled/js.min.js"
+				} );
+			} );
+
 		} );
 
 	}
