@@ -19,7 +19,7 @@ component extends="testbox.system.BaseSpec"{
 			it( "should call the 'process' method of the passed preProcessorDefinition processor", function(){
 				var testProcessor = new sticker.util.PreProcessorDefinition(
 					  preprocessor = "resources.preprocessors.DummyPreProcessor"
-					, source       = "/js/javascript.js"
+					, source       = [ "/js/javascript.js" ]
 					, destination  = "/compiled/javascript.min.js"
 				);
 

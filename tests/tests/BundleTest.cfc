@@ -193,13 +193,13 @@ component extends="testbox.system.BaseSpec"{
 				var testProcessor1 = {
 					  preprocessor = "sticker.preprocessors.Less"
 					, directories  = [ "/css" ]
-					, source       = "*.less"
+					, source       = [ "*.less" ]
 					, destination  = function( source ){ return source & ".css"; }
 				};
 				var testProcessor2 = {
 					  preprocessor = "sticker.preprocessors.Minify"
 					, directories  = [ "/css", "/js" ]
-					, source       = function( path ){ return ReFindNoCase( "\.(js|css)$", path ); }
+					, source       = [ "\.(js|css)$" ]
 					, destination  = function( source ){ return "test.min.css"; }
 				};
 

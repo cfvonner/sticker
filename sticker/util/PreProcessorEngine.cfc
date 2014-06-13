@@ -16,9 +16,6 @@ component output=false {
 		var src                = definition.getSource();
 		var dest               = root & ReReplace( definition.getDestination(), "^/", "" );
 
-		if ( !IsArray( src ) ) {
-			src = [ src ];
-		}
 		src = _resolveWildcardFileArray( arguments.rootDirectory, src );
 		if ( !IsNull( definition.getFilter() ) ){
 			src = src.filter( definition.getFilter() );
