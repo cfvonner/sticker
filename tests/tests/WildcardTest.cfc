@@ -28,6 +28,24 @@ component extends="testbox.system.BaseSpec"{
 
 			} );
 
+			it ( "should return files in order that the filters come in with alphabetical order as a tie breaker", function(){
+				var result = wildcard.directoryList( ExpandPath( "/resources/wildcardFilesTest/" ), [
+					  "sortordertest/04.txt"
+					, "sortordertest/07.txt"
+					, "sortordertest/*.txt"
+					, "!sortordertest/01.txt"
+				] );
+
+				expect( result ).toBe([
+					  ExpandPath( "/resources/wildcardFilesTest/sortordertest/04.txt" )
+					, ExpandPath( "/resources/wildcardFilesTest/sortordertest/07.txt" )
+					, ExpandPath( "/resources/wildcardFilesTest/sortordertest/02.txt" )
+					, ExpandPath( "/resources/wildcardFilesTest/sortordertest/03.txt" )
+					, ExpandPath( "/resources/wildcardFilesTest/sortordertest/05.txt" )
+					, ExpandPath( "/resources/wildcardFilesTest/sortordertest/06.txt" )
+				] );
+			} );
+
 		} );
 	}
 

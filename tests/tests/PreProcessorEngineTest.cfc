@@ -48,7 +48,7 @@ component extends="testbox.system.BaseSpec"{
 
 				expect( request.__dummyPreProcessorLog.len() ).toBe( 1 );
 				expect( request.__dummyPreProcessorLog[1] ).toBe( {
-					  source      = [ "/resources/bundles/bundle1/js/subfolder/anotherjsfile.js", "/resources/bundles/bundle1/js/javascript.js" ]
+					  source      = [ "/resources/bundles/bundle1/js/javascript.js", "/resources/bundles/bundle1/js/subfolder/anotherjsfile.js" ]
 					, destination = "/resources/bundles/bundle1/compiled/javascript.min.js"
 				} );
 			} );
@@ -66,7 +66,7 @@ component extends="testbox.system.BaseSpec"{
 
 				expect( request.__dummyPreProcessorLog.len() ).toBe( 1 );
 				expect( request.__dummyPreProcessorLog[1] ).toBe( {
-					  source      = [ "/resources/bundles/bundle1/js/subfolder/anotherjsfile.js", "/resources/bundles/bundle1/js/javascript.js" ]
+					  source      = [ "/resources/bundles/bundle1/js/javascript.js", "/resources/bundles/bundle1/js/subfolder/anotherjsfile.js" ]
 					, destination = "/resources/bundles/bundle1/compiled/javascript.min.js"
 				} );
 			} );
@@ -110,12 +110,12 @@ component extends="testbox.system.BaseSpec"{
 
 				expect( request.__dummyPreProcessorLog.len() ).toBe( 2 );
 				expect( request.__dummyPreProcessorLog[1] ).toBe( {
-					  source      = [ "/resources/bundles/bundle1/js/subfolder/fa56e8c-myfile.min.js", "/resources/bundles/bundle1/js/subfolder/anotherjsfile.js" ]
-					, destination = "/resources/bundles/bundle1/compiled/js-subfolder.min.js"
-				} );
-				expect( request.__dummyPreProcessorLog[2] ).toBe( {
 					  source      = [ "/resources/bundles/bundle1/js/javascript.js" ]
 					, destination = "/resources/bundles/bundle1/compiled/js.min.js"
+				} );
+				expect( request.__dummyPreProcessorLog[2] ).toBe( {
+					  source      = [ "/resources/bundles/bundle1/js/subfolder/anotherjsfile.js", "/resources/bundles/bundle1/js/subfolder/fa56e8c-myfile.min.js" ]
+					, destination = "/resources/bundles/bundle1/compiled/js-subfolder.min.js"
 				} );
 			} );
 
