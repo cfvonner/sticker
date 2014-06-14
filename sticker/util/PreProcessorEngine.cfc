@@ -11,7 +11,7 @@ component output=false {
 	 * @rootDirectory.hint          root directory used to resolve all relative paths in the definition
 	 */
 	public void function run( required PreProcessorDefinition definition, required string rootDirectory ) output=false {
-		var preProcessorObject = CreateObject( definition.getPreProcessor() );
+		var preProcessorObject = _getPreProcessorInstance( definition.getPreProcessor() );
 		var root               = ReReplace( arguments.rootDirectory, "(^/)$", "\1/" );
 		var src                = definition.getSource();
 		var dest               = definition.getDestination();
@@ -33,7 +33,6 @@ component output=false {
 			}
 		}
 
-		// root & ReReplace( dest, "^/", "" )
 		for( var destPath in destinationMap ){
 			preProcessorObject.process(
 				  source             = destinationMap[ destPath ]
@@ -57,6 +56,14 @@ component output=false {
 		}
 
 		return matches;
+	}
+
+	private any function _getPreProcessorInstance( required any preProcessor ) output=false {
+		if ( IsSimpleValue( arguments.preProcessor ) ) {
+			return CreateObject( arguments.preProcessor );
+		}
+
+		return arguments.preProcessor;
 	}
 
 }

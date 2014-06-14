@@ -139,6 +139,26 @@ component extends="testbox.system.BaseSpec"{
 				} );
 			} );
 
+			it( "should be able to deal with a preprocessor that has been passed as an instantiated object, rather than just a class path", function(){
+				var instance = new resources.preprocessors.DummyPreProcessor();
+				var testProcessor = new sticker.util.PreProcessorDefinition(
+					  preprocessor = instance
+					, source       = [ "/js/javascript.js" ]
+					, destination  = "/compiled/javascript.min.js"
+				);
+
+				request.__dummyPreProcessorLog = []; // see /resources/preprocessors/DummyPreProcessor for what we do with this variable
+
+				processor.run( definition=testProcessor, rootDirectory="/resources/bundles/bundle1/" );
+
+				expect( request.__dummyPreProcessorLog.len() ).toBe( 1 );
+				expect( request.__dummyPreProcessorLog[1] ).toBe( {
+					  source      = [ "/resources/bundles/bundle1/js/javascript.js" ]
+					, destination = "/resources/bundles/bundle1/compiled/javascript.min.js"
+				} );
+
+			} );
+
 		} );
 
 	}

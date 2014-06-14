@@ -3,7 +3,7 @@
  */
 component accessors=true output=false {
 
-	property name="preprocessor" type="string";
+	property name="preprocessor" type="any";
 	property name="directories"  type="array";
 	property name="source"       type="array";
 	property name="filter"       type="function";

@@ -118,10 +118,8 @@ component output=false {
 	 * I allow the configurator to register a preprocessor for the bundle
 	 */
 	public Bundle function addPreProcessor(
-		  required string preprocessor
-		,          array  directories  = [ "/" ]
+		  required any    preprocessor
 		,          array  source       = [ "**/*" ]
-		,          any    destination  = function( source ){ return source; }
 	) output=false {
 		var p = _getPreProcessors();
 
