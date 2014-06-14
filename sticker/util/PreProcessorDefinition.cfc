@@ -8,9 +8,10 @@ component accessors=true output=false {
 	property name="source"       type="array";
 	property name="filter"       type="function";
 	property name="destination"  type="any";
+	property name="options"      type="struct";
 
 	public struct function getMemento() output=false {
-		var keys = [ "preprocessor", "directories", "source", "destination", "filter" ];
+		var keys = [ "preprocessor", "directories", "source", "destination", "filter", "options" ];
 		var memento = {};
 
 		for( var key in keys ){

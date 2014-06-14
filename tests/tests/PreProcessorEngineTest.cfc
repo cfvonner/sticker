@@ -119,6 +119,26 @@ component extends="testbox.system.BaseSpec"{
 				} );
 			} );
 
+			it( "should pass any additional specified options to the 'process' method of the preprocessor", function(){
+				var testProcessor = new sticker.util.PreProcessorDefinition(
+					  preprocessor = "resources.preprocessors.DummyPreProcessor"
+					, source       = [ "/js/javascript.js" ]
+					, destination  = "/compiled/javascript.min.js"
+					, options      = { test="option" }
+				);
+
+				request.__dummyPreProcessorLog = []; // see /resources/preprocessors/DummyPreProcessor for what we do with this variable
+
+				processor.run( definition=testProcessor, rootDirectory="/resources/bundles/bundle1/" );
+
+				expect( request.__dummyPreProcessorLog.len() ).toBe( 1 );
+				expect( request.__dummyPreProcessorLog[1] ).toBe( {
+					  source      = [ "/resources/bundles/bundle1/js/javascript.js" ]
+					, destination = "/resources/bundles/bundle1/compiled/javascript.min.js"
+					, test        = "option"
+				} );
+			} );
+
 		} );
 
 	}

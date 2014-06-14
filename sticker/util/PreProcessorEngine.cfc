@@ -36,8 +36,9 @@ component output=false {
 		// root & ReReplace( dest, "^/", "" )
 		for( var destPath in destinationMap ){
 			preProcessorObject.process(
-				  source      = destinationMap[ destPath ]
-				, destination = root & ReReplace( destPath, "^/", "" )
+				  source             = destinationMap[ destPath ]
+				, destination        = root & ReReplace( destPath, "^/", "" )
+				, argumentCollection = IsNull( definition.getOptions() ) ? {} : definition.getOptions()
 			);
 		}
 	}
