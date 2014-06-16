@@ -27,10 +27,14 @@ component output=false {
 				, details = "Received destination [#arguments.destination#] and source files #SerializeJson( arguments.source )#"
 			);
 		}
+		var lessCode          = FileRead( arguments.source[1] );
+		var lessFilePath      = arguments.source[1];
+		var compilationResult = _getRhinoWrapper().callJs(
+			  method = "compileLess" // see /sticker/preprocessors/javascript/lessProxy.js
+			, args   = [ lessCode, lessFilePath ]
+		);
 
-		var result = _getRhinoWrapper().callJs( "compileLess", [ FileRead( arguments.source[1] ), arguments.source[1] ] );
-
-		FileWrite( arguments.destination, result[ "css" ] );
+		FileWrite( arguments.destination, compilationResult[ "css" ] );
 	}
 
 // HELPER METHOD THAT THE LESS.JS CODE WILL CALL TO READ @IMPORT FILES WITH
