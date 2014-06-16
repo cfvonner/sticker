@@ -8,11 +8,10 @@ component output=false {
 	public Less function init() output=false {
 		var rhinoWrapper = new sticker.util.RhinoWrapper( "/sticker/lib/rhino-1.7R4.jar" );
 
-		rhinoWrapper.registerCfc( this, "lessImportReader" );
+		rhinoWrapper.registerCfc( cfc=this, name="lessImportReader" );
 		rhinoWrapper.loadJs( ExpandPath( "/sticker/lib/less/source-map-0.1.31.js"         ) );
 		rhinoWrapper.loadJs( ExpandPath( "/sticker/lib/less/less-1.7.1.js"                ) );
 		rhinoWrapper.loadJs( ExpandPath( "/sticker/preprocessors/javascript/lessProxy.js" ) );
-
 
 		_setRhinoWrapper( rhinoWrapper );
 
@@ -21,18 +20,15 @@ component output=false {
 
 // THE 'PROCESS' METHOD USED BY STICKER
 	public void function process( required array source, required string destination ) output=false {
-		var css          = "";
-		var rhinoWrapper = _getRhinoWrapper();
-
 		if ( arguments.source.len() > 1 ) {
 			throw(
 				  type    = "sticker.Less.tooManyInputFiles"
-				, message = "The LESS preprocess for sticker can only convert a single LESS file into a single CSS file."
+				, message = "The LESS preprocessor for sticker can only convert a single LESS file into a single CSS file."
 				, details = "Received destination [#arguments.destination#] and source files #SerializeJson( arguments.source )#"
 			);
 		}
 
-		var result = rhinoWrapper.callJs( "compileLess", [ FileRead( arguments.source[1] ), arguments.source[1] ] );
+		var result = _getRhinoWrapper().callJs( "compileLess", [ FileRead( arguments.source[1] ), arguments.source[1] ] );
 
 		FileWrite( arguments.destination, result[ "css" ] );
 	}
