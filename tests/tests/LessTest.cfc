@@ -28,6 +28,12 @@ component extends="testbox.system.BaseSpec"{
 				expect( FileExists( cssFile ) ).toBe( true );
 				expect( FileRead( cssFile ) ).toBe( expectedCss );
 			} );
+
+			it( "should throw a useful error when we attempt to compile more than a single LESS file at a time", function(){
+				expect( function(){
+					less.process( source=[ "/some/file.less", "/another/file.less" ], destination="destination.css" );
+				} ).toThrow( type="sticker.Less.tooManyInputFiles" );
+			} );
 		} );
 	}
 }

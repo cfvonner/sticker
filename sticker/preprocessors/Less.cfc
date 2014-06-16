@@ -19,12 +19,17 @@ component output=false {
 		var css          = "";
 		var rhinoWrapper = _getRhinoWrapper();
 
-		for( var filePath in arguments.source ){
-			var result = rhinoWrapper.callJs( "compileLess", [ FileRead( filePath ), filePath ] );
-			css &= result[ "css" ];
+		if ( arguments.source.len() > 1 ) {
+			throw(
+				  type    = "sticker.Less.tooManyInputFiles"
+				, message = "The LESS preprocess for sticker can only convert a single LESS file into a single CSS file."
+				, details = "Received destination [#arguments.destination#] and source files #SerializeJson( arguments.source )#"
+			);
 		}
 
-		FileWrite( arguments.destination, css );
+		var result = rhinoWrapper.callJs( "compileLess", [ FileRead( arguments.source[1] ), arguments.source[1] ] );
+
+		FileWrite( arguments.destination, result[ "css" ] );
 	}
 
 // PRIVATE METHODS
