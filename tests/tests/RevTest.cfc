@@ -24,7 +24,7 @@ component extends="testbox.system.BaseSpec"{
 				};
 
 				// clean slate
-				DirectoryList( "/resources/rev" ).each( function( path ){
+				DirectoryList( "/resources/rev", false, "path", "*.txt" ).each( function( path ){
 					FileDelete( path );
 				} );
 
