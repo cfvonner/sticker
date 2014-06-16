@@ -22,6 +22,11 @@ component output=false {
 	}
 
 // PUBLIC API METHODS
+	/**
+	 * I add javascript to the rhino context
+	 *
+	 * @input.hint Either a raw javascript string or filepath to a file that contains javascript
+	 */
 	public void function loadJs( required string input ){
 		var getInputStreamFromString = function( js ){ return CreateObject( "java", "java.io.ByteArrayInputStream" ).init( arguments.js.getBytes() ); };
 		var getInputStreamFromFile   = function( filepath ){ return CreateObject( "java", "java.io.FileInputStream" ).init( arguments.filePath ) };
@@ -37,6 +42,12 @@ component output=false {
 		}
 	}
 
+	/**
+	 * I allow you to call js methods that are registered in the global scope
+	 *
+	 * @method.hint Name of the method to call
+	 * @args.hint   Array of arguments to pass to the method
+	 */
 	public any function callJs( required string method, array args=[] ){
 		var scope      = _getScope();
 		var jsFunction = getGlobalVariable( arguments.method );
@@ -44,6 +55,13 @@ component output=false {
 		return _getContext().call( _getContextFactory(), jsFunction, scope, scope, arguments.args );
 	}
 
+	/**
+	 * I register a CFC instance to the javascript context so it can later
+	 * be called from JS with 'callCfcMethod( nameOfCfc, methodName, methodArgs )'
+	 *
+	 * @cfc.hint  Instantiated CFC
+	 * @name.hint Name with which to register the CFC
+	 */
 	public void function registerCfc( required any cfc, required string name ) output=false {
 		var jsVersionOfCfc = _getContext().javaToJS( arguments.cfc, _getScope() );
 
@@ -53,12 +71,24 @@ component output=false {
 		);
 	}
 
+	/**
+	 * I set variables in the javascript scope
+	 *
+	 * @name.hint          Name of the variable
+	 * @value.hint         Value of the variable
+	 * @addToVariable.hint Global variable on which to add this variable, e.g. 'window' or 'cfml' (default)
+	 */
 	public void function putGlobalVariable( required string name, required any value, string addToVariable="cfml" ) output=false {
 		var jsVariable = getGlobalVariable( arguments.addToVariable );
 
 		jsVariable.put( arguments.name, jsVariable, arguments.value );
 	}
 
+	/**
+	 * I return a Mozilla Rhino javascript object that is the value of the named variable you wish to get
+	 *
+	 * @name.hint Name of the global variable you wish to get
+	 */
 	public any function getGlobalVariable( required string name ) output=false {
 		return _getScope().get( arguments.name, _getScope() );
 	}
@@ -111,6 +141,4 @@ component output=false {
 	private void function _setScope( required any scope ) output=false {
 		_scope = arguments.scope;
 	}
-
-
 }
