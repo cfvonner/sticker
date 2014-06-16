@@ -44,8 +44,13 @@ component output=false {
 		return _getContext().call( _getContextFactory(), jsFunction, scope, scope, arguments.args );
 	}
 
-	public void function registerCfc( required any cfc, required string identifier ) output=false {
+	public void function registerCfc( required any cfc, required string name ) output=false {
+		var jsVersionOfCfc = _getContext().javaToJS( arguments.cfc, _getScope() );
 
+		callJs(
+			  method = "registerCfc"
+			, args   = [ jsVersionOfCfc, arguments.name ]
+		);
 	}
 
 	public void function putGlobalVariable( required string name, required any value, string addToVariable="cfml" ) output=false {
@@ -77,10 +82,9 @@ component output=false {
 	}
 
 	private void function _setupCFMLHelperEnvironment() output=false {
-		var js = "var cfml = { pageContext : null };"
-		       & "cfml.callCfcMethod = function( cfc, method, args ){"
-		       &     "return cfc.call( cfml.pageContext, method, args );"
-		       & "};";
+		var js = "var cfml          = { pageContext : null, cfcs : {} }"
+		       & "  , registerCfc   = function( cfc, name ){ cfml.cfcs[ name ] = cfc }"
+		       & "  , callCfcMethod = function( cfc, method, args ){ return cfml.cfcs[ cfc ].call( cfml.pageContext, method, args ); };"
 
 		loadJs( js );
 		putGlobalVariable( "pageContext", _getContext().javaToJS( getPageContext(), _getScope() ) );

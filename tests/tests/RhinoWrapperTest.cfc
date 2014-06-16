@@ -36,6 +36,25 @@ component extends="testbox.system.BaseSpec"{
 				expect( wrapper.callJs( "testFunction", [ "hello" ] ) ).toBe( "hello world" );
 			} );
 
+			it( "should be able to call js that we have loaded through a file", function(){
+				var wrapper = new sticker.util.RhinoWrapper( rhinoJarPath="/sticker/lib/rhino-1.7R4.jar" );
+
+				wrapper.loadJs( ExpandPath( "/resources/rhinoWrapper/test.js" ) );
+
+				expect( wrapper.callJs( "myMethod" ) ).toBe( "this is a test" );
+			} );
+
+		} );
+
+		describe( "registerCfc", function(){
+			it( "should make CFC and its methods available to js", function(){
+				var wrapper = new sticker.util.RhinoWrapper( rhinoJarPath="/sticker/lib/rhino-1.7R4.jar" );
+
+				wrapper.registerCfc( new resources.rhinoWrapper.Test(), "testCfc" );
+				wrapper.loadJs( "var testJsFunction = function( arg1 ){ return String( callCfcMethod( 'testCfc', 'testMe', [ arg1 ] ) ) };" );
+
+				expect( wrapper.callJs( "testJsFunction", [ "ducky" ] ) ).toBe( "hello ducky" );
+			} );
 		} );
 	}
 }
