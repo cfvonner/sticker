@@ -3,18 +3,23 @@
  * I take any LESS files as input and output CSS files :)
  */
 component output=false {
+
+// CONSTRUCTOR
 	public Less function init() output=false {
 		var rhinoWrapper = new sticker.util.RhinoWrapper( "/sticker/lib/rhino-1.7R4.jar" );
 
+		rhinoWrapper.registerCfc( this, "lessImportReader" );
 		rhinoWrapper.loadJs( ExpandPath( "/sticker/lib/less/source-map-0.1.31.js"         ) );
-		rhinoWrapper.loadJs( ExpandPath( "/sticker/preprocessors/javascript/lessProxy.js" ) );
 		rhinoWrapper.loadJs( ExpandPath( "/sticker/lib/less/less-1.7.1.js"                ) );
+		rhinoWrapper.loadJs( ExpandPath( "/sticker/preprocessors/javascript/lessProxy.js" ) );
+
 
 		_setRhinoWrapper( rhinoWrapper );
 
 		return this;
 	}
 
+// THE 'PROCESS' METHOD USED BY STICKER
 	public void function process( required array source, required string destination ) output=false {
 		var css          = "";
 		var rhinoWrapper = _getRhinoWrapper();
@@ -32,8 +37,13 @@ component output=false {
 		FileWrite( arguments.destination, result[ "css" ] );
 	}
 
-// PRIVATE METHODS
+// HELPER METHOD THAT THE LESS.JS CODE WILL CALL TO READ @IMPORT FILES WITH
+	public string function readImport( importPath, importedFromFileInfo ) output=false {
+		var currentDirectory = importedFromFileInfo[ 'currentDirectory' ] ?: "";
+		var fullImportPath   = currentDirectory & importPath;
 
+		return FileRead( fullImportPath );
+	}
 
 // GETTERS AND SETTERS
 	private any function _getRhinoWrapper() output=false {

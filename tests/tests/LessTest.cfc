@@ -34,6 +34,19 @@ component extends="testbox.system.BaseSpec"{
 					less.process( source=[ "/some/file.less", "/another/file.less" ], destination="destination.css" );
 				} ).toThrow( type="sticker.Less.tooManyInputFiles" );
 			} );
+
+			it( "should try to find and process import directives in LESS files that are relative to the source LESS file", function(){
+				var lessFile    = "/resources/LESS/subfolder/some.less";
+				var cssFile     = "/resources/LESS/subfolder/some.less.css";
+				var expectedCss = FileRead( "/resources/LESS/subfolder/some.less.expectedcss" );
+
+				if ( FileExists( cssFile ) ) {
+					FileDelete( cssFile );
+				}
+				less.process( source=[ lessFile ], destination=cssFile );
+				expect( FileExists( cssFile ) ).toBe( true );
+				expect( FileRead( cssFile ) ).toBe( expectedCss );
+			} );
 		} );
 	}
 }
