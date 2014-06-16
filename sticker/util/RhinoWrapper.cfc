@@ -37,8 +37,11 @@ component output=false {
 		}
 	}
 
-	public any function callJs(){
-		return "";
+	public any function callJs( required string method, array args=[] ){
+		var scope      = _getScope();
+		var jsFunction = getGlobalVariable( arguments.method );
+
+		return _getContext().call( _getContextFactory(), jsFunction, scope, scope, arguments.args );
 	}
 
 	public void function registerCfc( required any cfc, required string identifier ) output=false {
