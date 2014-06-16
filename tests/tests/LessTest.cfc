@@ -13,7 +13,6 @@ component extends="testbox.system.BaseSpec"{
 /*********************************** BDD SUITES ***********************************/
 
 	function run(){
-
 		describe( "process()", function(){
 
 			it( "should take the incoming LESS file and convert it to a CSS file", function(){
@@ -59,6 +58,28 @@ component extends="testbox.system.BaseSpec"{
 				less.process( source=[ lessFile ], destination=cssFile );
 				expect( FileExists( cssFile ) ).toBe( true );
 				expect( FileRead( cssFile ) ).toBe( expectedCss );
+			} );
+
+			it( "should generate a source map file when asked to do so", function(){
+				var lessFile      = "/resources/LESS/sourcemaptest/sourcemap.less";
+				var cssFile       = "/resources/LESS/sourcemaptest/sourcemap.less.css";
+				var sourceMapFile = "/resources/LESS/sourcemaptest/sourcemap.less.css.map";
+				var expectedCss   = FileRead( "/resources/LESS/sourcemaptest/sourcemap.less.expectedcss" );
+				var expectedMap   = FileRead( "/resources/LESS/sourcemaptest/sourcemap.less.expectedmap" );
+
+				if ( FileExists( cssFile ) ) {
+					FileDelete( cssFile );
+				}
+				if ( FileExists( sourceMapFile ) ) {
+					FileDelete( sourceMapFile );
+				}
+
+				less.process( source=[ lessFile ], destination=cssFile, sourceMap=true, sourceMapFilename=sourceMapFile );
+
+				expect( FileExists( cssFile ) ).toBe( true );
+				expect( FileRead( cssFile ) ).toBe( expectedCss );
+				expect( FileExists( sourceMapFile ) ).toBe( true );
+				expect( FileRead( sourceMapFile ) ).toBe( expectedMap );
 			} );
 		} );
 	}

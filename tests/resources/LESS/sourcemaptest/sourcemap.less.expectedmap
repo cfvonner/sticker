@@ -1,0 +1,1 @@
+{"version":3,"sources":["sourcemap.less"],"names":[],"mappings":"AAAA,IACC;EACC,iBAAA","sourcesContent":["body {\n\tdiv {\n\t\tbackground : black;\n\t}\n}"]}

@@ -3,17 +3,29 @@
  * simple through Rhino
  */
 
-var compileLess = function( source, path ){
+var compileLess = function( source, path, generateSourceMap, sourceMapURL ){
 	var lessParser = new window.less.Parser( { filename : path } )
-	  , css;
+	  , css, sourcemap;
 
 	lessParser.parse( source, function( e, root ){
 		if ( e ) { throw( e ); }
 
-		css = root.toCSS();
+		if ( generateSourceMap ) {
+			css = root.toCSS({
+				  sourceMap          : true
+				, writeSourceMap     : function( map ){ sourcemap = map }
+				, sourceMapGenerator : require( "source-map/source-map-generator" ).SourceMapGenerator
+				, sourceMapBasepath  : ""
+				, sourceMapRootpath  : ""
+				, sourceMapURL       : sourceMapURL
+				, outputSourceFiles : [ '']
+			});
+		} else {
+			css = root.toCSS();
+		}
 	} );
 
-	return { css:css };
+	return { css:css, sourcemap:sourcemap };
 };
 
 /**

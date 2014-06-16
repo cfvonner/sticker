@@ -20,7 +20,7 @@ component output=false {
 	}
 
 // THE 'PROCESS' METHOD USED BY STICKER
-	public void function process( required array source, required string destination ) output=false {
+	public void function process( required array source, required string destination, boolean sourceMap=false, any sourceMapFilename ) output=false {
 		if ( arguments.source.len() > 1 ) {
 			throw(
 				  type    = "sticker.Less.tooManyInputFiles"
@@ -28,14 +28,24 @@ component output=false {
 				, details = "Received destination [#arguments.destination#] and source files #SerializeJson( arguments.source )#"
 			);
 		}
-		var lessCode          = FileRead( arguments.source[1] );
-		var lessFilePath      = arguments.source[1];
+		var lessCode     = FileRead( arguments.source[1] );
+		var lessFilePath = arguments.source[1];
+		var args         = [ lessCode, lessFilePath, arguments.sourceMap ];
+
+		if ( arguments.sourceMap ) {
+			args[2] = _calculateRelativePath( sourceMapFilename, lessFilePath );
+			args.append( _calculateRelativePath( destination, sourceMapFilename ) );
+		}
+
 		var compilationResult = _getRhinoWrapper().callJs(
 			  method = "compileLess" // see /sticker/preprocessors/javascript/lessProxy.js
-			, args   = [ lessCode, lessFilePath ]
+			, args   = args
 		);
 
 		FileWrite( arguments.destination, compilationResult[ "css" ] );
+		if ( arguments.sourceMap ) {
+			FileWrite( arguments.sourceMapFilename, compilationResult[ "sourcemap" ] );
+		}
 	}
 
 // HELPER METHOD THAT THE LESS.JS CODE WILL CALL TO READ @IMPORT FILES WITH
@@ -55,6 +65,48 @@ component output=false {
 		}
 
 		return "";
+	}
+
+// PRIVATE HELPERS
+	private string function _calculateRelativePath( required string basePath, required string relativePath ) output=false {
+		var baseDirectory     = GetDirectoryFromPath( basePath );
+		var basePathArray     = ListToArray( baseDirectory, "\/" );
+		var relativePathArray = ListToArray( relativePath, "\/" );
+		var finalPath         = []
+		var pathStart         = 0;
+		var i                 = 0;
+
+		if ( relativePath.startsWith( baseDirectory ) ) {
+			return Right( relativePath, Len( relativePath ) - Len( baseDirectory ) );
+		}
+
+		/* Define the starting path (path in common) */
+		for ( i=1; i <= basePathArray.len(); i++ ) {
+			if ( basePathArray[i] != relativePathArray[i] ) {
+				pathStart = i;
+				break;
+			}
+		}
+
+		if ( pathStart EQ 0 ) {
+			ArrayAppend( finalPath, "." );
+			pathStart = ArrayLen( basePathArray );
+		}
+
+		/* Build the prefix for the relative path (../../etc.) */
+		for ( i=ArrayLen( basePathArray ) - pathStart; i GTE 0; i=i-1 ) {
+			if ( ArrayLen( finalPath ) and finalPath[1] eq "." ) {
+				ArrayDeleteAt( finalPath, 1 );
+			}
+			ArrayAppend( finalPath, ".." );
+		}
+
+		/* Build the relative path */
+		for ( i=pathStart; i LTE ArrayLen(relativePathArray); i=i+1 ) {
+			ArrayAppend( finalPath, relativePathArray[i] );
+		}
+
+		return ArrayToList( finalPath, "/" );
 	}
 
 // GETTERS AND SETTERS
