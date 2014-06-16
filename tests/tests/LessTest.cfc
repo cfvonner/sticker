@@ -4,7 +4,7 @@ component extends="testbox.system.BaseSpec"{
 
 	// executes before all suites+specs in the run() method
 	function beforeAll(){
-		variables.less = new sticker.preprocessors.Less();
+		variables.less = new sticker.preprocessors.Less( baseImportPath="/resources/LESS/globals" );
 	}
 
 	// executes after all suites+specs in the run() method
@@ -39,6 +39,19 @@ component extends="testbox.system.BaseSpec"{
 				var lessFile    = "/resources/LESS/subfolder/some.less";
 				var cssFile     = "/resources/LESS/subfolder/some.less.css";
 				var expectedCss = FileRead( "/resources/LESS/subfolder/some.less.expectedcss" );
+
+				if ( FileExists( cssFile ) ) {
+					FileDelete( cssFile );
+				}
+				less.process( source=[ lessFile ], destination=cssFile );
+				expect( FileExists( cssFile ) ).toBe( true );
+				expect( FileRead( cssFile ) ).toBe( expectedCss );
+			} );
+
+			it( "should try to find and process import directives in LESS files that are relative to the configured base path if it cannot find it relative to the LESS file", function(){
+				var lessFile    = "/resources/LESS/subfolder/another.less";
+				var cssFile     = "/resources/LESS/subfolder/another.less.css";
+				var expectedCss = FileRead( "/resources/LESS/subfolder/another.less.expectedcss" );
 
 				if ( FileExists( cssFile ) ) {
 					FileDelete( cssFile );
