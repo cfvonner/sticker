@@ -11,7 +11,8 @@ component output=false {
 	 * @rootDirectory.hint          root directory used to resolve all relative paths in the definition
 	 */
 	public void function run( required PreProcessorDefinition definition, required string rootDirectory ) output=false {
-		var preProcessorObject = _getPreProcessorInstance( definition.getPreProcessor() );
+		var options            = IsNull( definition.getOptions() ) ? {} : definition.getOptions();
+		var preProcessorObject = _getPreProcessorInstance( definition.getPreProcessor(), options );
 		var root               = ReReplace( arguments.rootDirectory, "(^/)$", "\1/" );
 		var src                = definition.getSource();
 		var dest               = definition.getDestination();
@@ -37,7 +38,7 @@ component output=false {
 			preProcessorObject.process(
 				  source             = destinationMap[ destPath ]
 				, destination        = root & ReReplace( destPath, "^/", "" )
-				, argumentCollection = IsNull( definition.getOptions() ) ? {} : definition.getOptions()
+				, argumentCollection = options
 			);
 		}
 	}
@@ -58,9 +59,19 @@ component output=false {
 		return matches;
 	}
 
-	private any function _getPreProcessorInstance( required any preProcessor ) output=false {
+	private any function _getPreProcessorInstance( required any preProcessor, required struct initOptions ) output=false {
+
 		if ( IsSimpleValue( arguments.preProcessor ) ) {
-			return CreateObject( arguments.preProcessor );
+			var obj  = CreateObject( arguments.preProcessor );
+			var meta = GetMetaData( obj );
+			var functions = ( meta.functions ?: [] );
+
+			for( var func in functions ){
+				if ( ( func.name ?: "" ) == "init" ) {
+					return obj.init( argumentCollection = initOptions );
+				}
+			}
+			return obj;
 		}
 
 		return arguments.preProcessor;

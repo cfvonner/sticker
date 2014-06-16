@@ -128,6 +128,7 @@ component extends="testbox.system.BaseSpec"{
 				);
 
 				request.__dummyPreProcessorLog = []; // see /resources/preprocessors/DummyPreProcessor for what we do with this variable
+				request.__dummyPreProcessorInitLog = []; // see /resources/preprocessors/DummyPreProcessor for what we do with this variable
 
 				processor.run( definition=testProcessor, rootDirectory="/resources/bundles/bundle1/" );
 
@@ -137,6 +138,9 @@ component extends="testbox.system.BaseSpec"{
 					, destination = "/resources/bundles/bundle1/compiled/javascript.min.js"
 					, test        = "option"
 				} );
+
+				expect( request.__dummyPreProcessorInitLog.len() ).toBe( 1 );
+				expect( request.__dummyPreProcessorInitLog[1] ).toBe( { test = "option" } );
 			} );
 
 			it( "should be able to deal with a preprocessor that has been passed as an instantiated object, rather than just a class path", function(){
