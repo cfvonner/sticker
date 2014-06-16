@@ -7,6 +7,7 @@
 	<property name="test.project" value="sticker-ci" />
 	<property name="test.framework" value="testbox" />
 	<property name="work.dir" value="/tmp/work" />
+	<property name="download.dir" value="downloads" />
 	<property name="build.dir" value="" />
 	<property name="server.name" value="localhost"/>
 	<property name="server.port" value="8888"/>
@@ -41,7 +42,7 @@
 	</path>
 	<taskdef resource="net/sf/antcontrib/antlib.xml" classpathref="cp" />
 
-	<target name="build" depends="setupartifactsdir,setupoutputdir,setupreleaselabel">
+	<target name="build" depends="install-sticker-deps,setupartifactsdir,setupoutputdir,setupreleaselabel">
 		<concat destfile="../sticker/${build.label}">Built on ${start.TODAY}</concat>
 		<copy file="../LICENSE" tofile="../sticker/LICENSE" />
 		<copy file="../README.md" tofile="../sticker/README.md" />
@@ -54,6 +55,42 @@
 		<delete file="../sticker/${build.label}" failonerror="false" />
 		<delete file="../sticker/LICENSE" failonerror="false" />
 		<delete file="../sticker/README.md" failonerror="false" />
+	</target>
+
+	<target name="install-sticker-deps" depends="setupdownloadsdir">
+		<!-- rhino -->
+		<delete dir="${rhino.install.location}"/>
+		<mkdir dir="${rhino.install.location}" />
+		<get src="${rhino.url}" dest="${download.dir}/rhino.zip" />
+		<unzip src="${download.dir}/rhino.zip" dest="${rhino.install.location}">
+			<patternset>
+				<include name="rhino1_7R4/js.jar"/>
+			</patternset>
+			<mapper>
+				<globmapper from="rhino1_7R4/js.jar" to="rhino-1.7r4.jar" />
+			</mapper>
+		</unzip>
+
+		<!-- wildcard -->
+		<delete dir="${wildcard.install.location}"/>
+		<mkdir dir="${wildcard.install.location}" />
+		<get src="${wildcard.url}" dest="${wildcard.install.location}" />
+
+		<!-- less -->
+		<delete dir="${less.install.location}"/>
+		<mkdir dir="${less.install.location}" />
+		<get src="${less.url}" dest="${download.dir}/less.zip" />
+		<unzip src="${download.dir}/less.zip" dest="${less.install.location}">
+			<patternset>
+				<include name="less.js-1.7.1/dist/less-1.7.1.js" />
+				<include name="less.js-1.7.1/lib/source-map/source-map-0.1.31.js" />
+			</patternset>
+			<mapper>
+				<globmapper from="less.js-1.7.1/dist/less-1.7.1.js" to="less-1.7.1.js"/>
+				<globmapper from="less.js-1.7.1/lib/source-map/source-map-0.1.31.js" to="source-map-0.1.31.js"/>
+			</mapper>
+		</unzip>
+
 	</target>
 
 	<target name="install-ci-deps" depends="setupTestRunnerEnvironment">
@@ -96,7 +133,7 @@
 		</exec>
 	</target>
 
-	<target name="test-ci" depends="setupTestRunnerEnvironment,setupoutputdir,start-server,test,stop-server">
+	<target name="test-ci" depends="setupTestRunnerEnvironment,setupoutputdir,install-sticker-deps,start-server,test,stop-server">
 		<property file="${output.dir}/testbox.properties" />
 		<fail if="testbox.failed" message="At least one test failure!" />
 	</target>
@@ -108,6 +145,10 @@
 	<target name="setupartifactsdir">
 		<delete dir="${artifacts.dir}"/>
 		<mkdir dir="${artifacts.dir}"/>
+	</target>
+	<target name="setupdownloadsdir">
+		<delete dir="${download.dir}"/>
+		<mkdir dir="${download.dir}"/>
 	</target>
 
 	<target name="test">

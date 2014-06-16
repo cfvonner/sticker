@@ -6,7 +6,7 @@ component output=false {
 
 // CONSTRUCTOR
 	public Less function init( required string baseImportPath ) output=false {
-		var rhinoWrapper = new sticker.util.RhinoWrapper( "/sticker/lib/rhino-1.7R4.jar" );
+		var rhinoWrapper = new sticker.util.RhinoWrapper( "/sticker/lib/rhino/rhino-1.7r4.jar" );
 
 		rhinoWrapper.registerCfc( cfc=this, name="lessImportReader" );
 		rhinoWrapper.loadJs( ExpandPath( "/sticker/lib/less/source-map-0.1.31.js"         ) );

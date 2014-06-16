@@ -13,7 +13,7 @@ component output=false {
 	 * @globFilters.hint Array of string GLOB filters with which to search the directory
 	 */
 	public array function directoryList( required string directory, required array globFilters ) output=false {
-		var paths            = CreateObject( "java", "com.esotericsoftware.wildcard.Paths", ExpandPath( "/sticker/lib/wildcard-1.04.jar" ) );
+		var paths            = CreateObject( "java", "com.esotericsoftware.wildcard.Paths", ExpandPath( "/sticker/lib/wildcard/wildcard-1.04.jar" ) );
 		var exclusionFilters = globFilters.filter( function( fltr ){ return Left( fltr, 1 ) == "!"; } );
 		var inclusionFilters = globFilters.filter( function( fltr ){ return Left( fltr, 1 ) != "!"; } );
 		var filePaths        = StructNew( "linked" );

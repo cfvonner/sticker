@@ -15,7 +15,7 @@ component extends="testbox.system.BaseSpec"{
 		describe( "init()", function(){
 
 			it( "should return an instantiated RhinoWrapper with dummy window environment and CFML environment pre-loaded", function(){
-				var wrapper = new sticker.util.RhinoWrapper( rhinoJarPath="/sticker/lib/rhino-1.7R4.jar" );
+				var wrapper = new sticker.util.RhinoWrapper( rhinoJarPath="/sticker/lib/rhino/rhino-1.7r4.jar" );
 				var window = wrapper.getGlobalVariable( "window" );
 				var cfml   = wrapper.getGlobalVariable( "cfml" );
 
@@ -29,7 +29,7 @@ component extends="testbox.system.BaseSpec"{
 		describe( "callJs", function(){
 
 			it( "should return the value of the javascript method we wish to call", function(){
-				var wrapper = new sticker.util.RhinoWrapper( rhinoJarPath="/sticker/lib/rhino-1.7R4.jar" );
+				var wrapper = new sticker.util.RhinoWrapper( rhinoJarPath="/sticker/lib/rhino/rhino-1.7r4.jar" );
 
 				wrapper.loadJs( "var testFunction = function( arg1 ){ return arg1 + ' world'; };" );
 
@@ -37,7 +37,7 @@ component extends="testbox.system.BaseSpec"{
 			} );
 
 			it( "should be able to call js that we have loaded through a file", function(){
-				var wrapper = new sticker.util.RhinoWrapper( rhinoJarPath="/sticker/lib/rhino-1.7R4.jar" );
+				var wrapper = new sticker.util.RhinoWrapper( rhinoJarPath="/sticker/lib/rhino/rhino-1.7r4.jar" );
 
 				wrapper.loadJs( ExpandPath( "/resources/rhinoWrapper/test.js" ) );
 
@@ -48,7 +48,7 @@ component extends="testbox.system.BaseSpec"{
 
 		describe( "registerCfc", function(){
 			it( "should make CFC and its methods available to js", function(){
-				var wrapper = new sticker.util.RhinoWrapper( rhinoJarPath="/sticker/lib/rhino-1.7R4.jar" );
+				var wrapper = new sticker.util.RhinoWrapper( rhinoJarPath="/sticker/lib/rhino/rhino-1.7r4.jar" );
 
 				wrapper.registerCfc( new resources.rhinoWrapper.Test(), "testCfc" );
 				wrapper.loadJs( "var testJsFunction = function( arg1 ){ return String( callCfcMethod( 'testCfc', 'testMe', [ arg1 ] ) ) };" );
