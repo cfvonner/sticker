@@ -26,7 +26,7 @@ component extends="testbox.system.BaseSpec"{
 
 		} );
 
-		describe( "callJs", function(){
+		describe( "callJs()", function(){
 
 			it( "should return the value of the javascript method we wish to call", function(){
 				var wrapper = new sticker.util.RhinoWrapper( rhinoJarPath="/sticker/lib/rhino/rhino-1.7r4.jar" );
@@ -46,7 +46,7 @@ component extends="testbox.system.BaseSpec"{
 
 		} );
 
-		describe( "registerCfc", function(){
+		describe( "registerCfc()", function(){
 			it( "should make CFC and its methods available to js", function(){
 				var wrapper = new sticker.util.RhinoWrapper( rhinoJarPath="/sticker/lib/rhino/rhino-1.7r4.jar" );
 
@@ -54,6 +54,16 @@ component extends="testbox.system.BaseSpec"{
 				wrapper.loadJs( "var testJsFunction = function( arg1 ){ return String( callCfcMethod( 'testCfc', 'testMe', [ arg1 ] ) ) };" );
 
 				expect( wrapper.callJs( "testJsFunction", [ "ducky" ] ) ).toBe( "hello ducky" );
+			} );
+		} );
+
+		describe( "require()", function(){
+
+			it( "should provide Node-like require() and modules.exports() support to the script that it includes", function(){
+				var wrapper = new sticker.util.RhinoWrapper( rhinoJarPath="/sticker/lib/rhino/rhino-1.7r4.jar" );
+				var result  = wrapper.require( "/resources/rhinoWrapper/requiretest" );
+
+				expect( result[ "heythereworld" ] ?: "" ).toBe( "hello world!" );
 			} );
 		} );
 	}

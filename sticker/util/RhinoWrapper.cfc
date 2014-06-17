@@ -17,6 +17,7 @@ component output=false {
 		_setupRhinoContext( arguments.rhinoJarPath );
 		_setupDummyBrowserEnvironment();
 		_setupCFMLHelperEnvironment();
+		_setupRequireJsHelpers();
 
 		return this;
 	}
@@ -27,19 +28,22 @@ component output=false {
 	 *
 	 * @input.hint Either a raw javascript string or filepath to a file that contains javascript
 	 */
-	public void function loadJs( required string input ){
+	public any function loadJs( required string input ){
 		var getInputStreamFromString = function( js ){ return CreateObject( "java", "java.io.ByteArrayInputStream" ).init( arguments.js.getBytes() ); };
 		var getInputStreamFromFile   = function( filepath ){ return CreateObject( "java", "java.io.FileInputStream" ).init( arguments.filePath ) };
 		var inputStream              = FileExists( arguments.input ) ? getInputStreamFromFile( arguments.input ) : getInputStreamFromString( arguments.input );
 		var reader                   = CreateObject( "java", "java.io.InputStreamReader" ).init( inputStream );
+		var result                   = "";
 
 		try {
-			_getContext().evaluateReader( _getScope(), reader, "", 1, NullValue() );
+			result = _getContext().evaluateReader( _getScope(), reader, "", 1, NullValue() );
 		} catch( any e ) {
 			rethrow;
 		} finally {
 			reader.close();
 		}
+
+		return result;
 	}
 
 	/**
@@ -93,6 +97,36 @@ component output=false {
 		return _getScope().get( arguments.name, _getScope() );
 	}
 
+	/**
+	 * I import some javascript using the requiresJS module pattern used by NODE
+	 * and return the exports / modules.exports variable of the included js
+	 *
+	 * @path.hint path to javascript file, can ommit the file extension
+	 */
+	public any function require( required string path ) output=false {
+		var fullPath = ReFindNoCase( "\.js$", arguments.path ) ? arguments.path : arguments.path & ".js";
+		var dir      = GetDirectoryFromPath( fullPath );
+		var anonFunc = loadJs( _wrapJsForRequireJs( FileRead( fullPath ), dir ) );
+		var module = loadJs( "( function(){ return { exports : {} } } )();" );
+
+		anonFunc.call(
+			  _getContext()
+			, _getScope()
+			, _getScope()
+			, [ module['exports'], module ]
+		);
+
+		return module['exports'] ?: {};
+	}
+
+	public string function fetchRequiresContent( required string parentPath, required string id ) output=false {
+		var fullPath  = parentPath & id & ".js";
+		var directory = GetDirectoryFromPath( fullPath );
+		var js        = _wrapJsForRequireJs( FileRead( fullPath ), directory );
+
+		return loadJs( js );
+	}
+
 // PRIVATE HELPERS
 	private void function _setupRhinoContext( required string rhinoJarPath ) output=false {
 		var contextFactory = CreateObject( "java", "org.mozilla.javascript.ContextFactory", arguments.rhinoJarPath );
@@ -118,6 +152,19 @@ component output=false {
 
 		loadJs( js );
 		putGlobalVariable( "pageContext", _getContext().javaToJS( getPageContext(), _getScope() ) );
+	}
+
+	private void function _setupRequireJsHelpers() output=false {
+		registerCfc( cfc=this, name="rhinoWrapper" );
+	}
+
+	private string function _wrapJsForRequireJs( required string js, required string parentPath ) output=false {
+		var header = FileRead( "/sticker/resources/rhinowrapper/require_header.js" );
+		var footer = FileRead( "/sticker/resources/rhinowrapper/require_footer.js" );
+
+		header = Replace( header, "${parentPath}", parentPath, "all" );
+
+		return header & arguments.js & footer;
 	}
 
 // GETTERS AND SETTERS
