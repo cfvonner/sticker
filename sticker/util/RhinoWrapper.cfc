@@ -119,8 +119,16 @@ component output=false {
 		return module['exports'] ?: {};
 	}
 
-	public string function fetchRequiresContent( required string parentPath, required string id ) output=false {
-		var fullPath  = parentPath & id & ".js";
+	public any function fetchRequiresContent( required string parentPath, required string id ) output=false {
+		var isNodeCoreModule = ReFind( "^[a-z]", id );
+		var fullPath         = "";
+
+		if ( isNodeCoreModule ) {
+			fullPath = "/resources/rhinowrapper/nodeCoreModules/#id#.js";
+		} else {
+			fullPath  = parentPath & id & ".js";
+		}
+
 		var directory = GetDirectoryFromPath( fullPath );
 		var js        = _wrapJsForRequireJs( FileRead( fullPath ), directory );
 
