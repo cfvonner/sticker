@@ -210,7 +210,24 @@ component extends="testbox.system.BaseSpec"{
 			);
 		} );
 
+	} );
 
+	describe( "preProcess()", function(){
+
+		it( "should run all registered pre-processors in all bundles", function(){
+			var sticker = new sticker.Sticker();
+
+			request.__dummyPreProcessorLog = [];
+			sticker.addBundle( rootDirectory="/resources/bundles/bundle1/", rootUrl="http://bundle1.com/assets" )
+			       .addBundle( rootDirectory="/resources/bundles/bundle2/", rootUrl="http://bundle2.com/assets" )
+			       .load();
+
+
+			sticker.preProcess();
+
+			expect( request.__dummyPreProcessorLog.len() ).toBe( 7 );
+
+		} );
 
 	} );
 

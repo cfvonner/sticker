@@ -61,6 +61,16 @@ component output=false {
 		return assets;
 	}
 
+	/**
+	 * I run all the preprocessors on all the bundles
+	 *
+	 */
+	public void function preProcess() output=false {
+		_getBundles().each( function( bundle ){
+			bundle.preProcess();
+		} );
+	}
+
 // PRIVATE HELPERS
 	private string function _convertDirectoryToComponentPath( required string directory ) output=false {
 		var trimmed = ReReplace( arguments.directory, "^\/?(.*?)\/?$", "\1" );

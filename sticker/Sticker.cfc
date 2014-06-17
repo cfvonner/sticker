@@ -169,6 +169,13 @@ component output=false {
 		return rendered;
 	}
 
+	/**
+	 * I run all registered bundle preProcessors
+	 */
+	public void function preProcess() output=false {
+		var bundles = _getBundleManager().preProcess();
+	}
+
 // PRIVATE UTILITY
 	private void function _checkReady() output=false {
 		if ( !ready() ) {

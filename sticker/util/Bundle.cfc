@@ -115,6 +115,20 @@ component output=false {
 	}
 
 	/**
+	 * I run all the preprocessors in order
+	 */
+	public void function preProcess() output=false {
+		var engine = new PreProcessorEngine();
+
+		getPreProcessors().each( function( preProcessorDefinition ){
+			engine.run(
+				  definition    = preProcessorDefinition
+				, rootDirectory = _getRootDirectory()
+			);
+		} );
+	}
+
+	/**
 	 * I allow the configurator to register a preprocessor for the bundle
 	 */
 	public Bundle function addPreProcessor(

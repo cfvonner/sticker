@@ -23,6 +23,12 @@ component output=false {
 		);
 
 		bundle.asset( "js-subfolder-myfile" ).before( "*" );
+
+		bundle.addPreProcessor(
+			  preprocessor = "resources.preprocessors.DummyPreProcessor"
+			, source       = [ "/js/javascript.js" ]
+			, destination  = "/compiled/javascript.min.js"
+		);
 	}
 
 }
