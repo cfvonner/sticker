@@ -114,8 +114,8 @@ And a :code:`StickerBundle.cfc` file that looks like this:
                 , filter      = "*.min.css"
                 , idGenerator = function( filePath ){
                      var id = Replace( filepath, "/", "-", "all" );
-                     id = ReReplace( filePath, "\.min\.css$", "" );
-                     id = ReReplace( filePath, "^-", "" );
+                     id = ReReplace( id, "\.min\.css$", "" );
+                     id = ReReplace( id, "^-", "" );
 
                      return id;
                   }
@@ -127,8 +127,8 @@ And a :code:`StickerBundle.cfc` file that looks like this:
                 , filter      = function( filePath ){ return ReFindNoCase( "\.min\.js$", filePath ); }
                 , idGenerator = function( filePath ){
                      var id = Replace( filepath, "/", "-", "all" );
-                     id = ReReplace( filePath, "\.min\.js$", "" );
-                     id = ReReplace( filePath, "^-", "" );
+                     id = ReReplace( id, "\.min\.js$", "" );
+                     id = ReReplace( id, "^-", "" );
 
                      return id;
                   }
